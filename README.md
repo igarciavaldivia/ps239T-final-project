@@ -10,18 +10,23 @@ The code is divided into **three** main sections.: (1) set up, (2) visualization
   2. LaTeX, MiKTeX 2.9 distribution.
 
 ##Files
+
 ###Data:
+
 Due to confidentially concerns, this data will not be uploaded. Please contact researcher for access to the data.
+
 ###Code: 
   1. 01_setup.Rmd - cleaning and saving CPS 2017 data set; preparing CPS 2017 and CPS 2016 data for machine learning
   2. 02_visualizations.Rmd - plots and visualizes data by age, legal status, and gender
   3. 03_machine_learning.Rmd - basic machine learning decision tree for CPS 2016 data
+
 ###Results: 
   1. binary_model.png - Basic decision tree plot for CPS 2017
   2. decision_tree_output.png - picture of most important variables for machine learning decision tree 
   3. g1_boxplot.png - 1 bloxplot showing older adults (50 + years old and older) by legal status
   4. olderadultsinUS.png - 3 plots showing older adults (50 + years old and older) by legal status and gender
   5. mexolderadultsinUS.png - 3 plots showing Mexican older adults (50 + years old and older) by legal status and gender
+
 ### Presentation Files
 This includes figures and results and other files needed to compile the final presentation.
   1.
@@ -30,5 +35,5 @@ This includes figures and results and other files needed to compile the final pr
 
 ##More Information 
 For questions and/or concerns, please contact the creator.
-**Creator:** Isabel García Valdivia (isabel.garcia@berkeley.edu)
-**Course Instructor Spring 2018:** Rachel Bernhard (rbernhard@berkeley.edu)
+>**Creator:** Isabel García Valdivia (isabel.garcia@berkeley.edu)
+>**Course Instructor Spring 2018:** Rachel Bernhard (rbernhard@berkeley.edu)
