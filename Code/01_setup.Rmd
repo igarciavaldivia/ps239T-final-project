@@ -1,0 +1,726 @@
+---
+title: "01_setup"
+author: "Isabel García Valdivia"
+date: "4/25/2018"
+output: html_document
+---
+#PART I: Data Set-Up and Cleaning.
+## Setup environment
+I am using a R project, thus my working directory is already opened when I open my directory.  I have provided code for the manual set-up instructions below.
+```{r, eval = F}
+# remove all objects
+rm(list=ls())
+#Set and check directory (if you are not using a R project)
+#setwd(dir="/Users/isabelgarcia/Desktop/ps239T-final-project/Data")
+#getwd()
+```
+
+## Load Libraries/Packages
+```{r, eval=FALSE}
+library(readstata13) #reads .dta Stata files constructed after Stata 12
+library(dplyr)    #cleaning data
+library(tidyr)    #cleaning data
+```
+
+
+## Load Data Set
+The data set is from IPUMS Current Population Survey (CPS), particularly the data from the March Supplement from 2017 (we will start with 2017 data and use machine learning for 2016).
+```{r, eval=FALSE}
+# Read Stata file after Version 13 (see https://cran.r-project.org/web/packages/readstata13/README.html)
+cps <- read.dta13("/Users/isabelgarcia/Dropbox/IPUMS_CPS/CPS_Data_2017/cps17_00019.dta") #CPS 2017 download: cps_00019
+names(cps)  #gives you the names of all variables in data.frame
+dim(cps) #check columns and rows
+
+#Convert the variable names into lower case
+colnames(cps)<-tolower(colnames(cps))
+```
+
+##Select & CleabVariables of Interest
+The data contains 50 variables and more than 55,000 observations. We began by cleaning the data.
+
+### Clean Variables
+####(1) Year
+This variable was kept "as is".
+```{r, eval=FALSE}
+class(cps$year) #integer
+table(cps$year)
+
+cps$year_num <- as.numeric(cps$year) #convert to numeric
+class(cps$year_num)
+table(cps$year_num)
+```
+
+####(2) Citizenship
+This variable was converted to character and logical vectors. This includes the variable for individual person citizenship (named "citizen_chr" and "citizen_log") and spouse citizenship (named "citizensp_chr" and "citizensp_log").
+```{r, eval=FALSE}
+#Individual person
+# (1) Factor
+class(cps$citizen) #factor
+table(cps$citizen) #need to recode
+cps$citizen_factor <- cps$citizen #create a factor variable
+levels(cps$citizen_factor) #Check levels and replace labels
+levels(cps$citizen_factor)[5] <- NA
+levels(cps$citizen_factor)[1] <- "us-born"
+table(cps$citizen_factor) #check
+
+# (2) Convert to character
+cps$citizen_chr <- as.character(cps$citizen_factor)
+table(cps$citizen_chr)
+
+# (3) Convert to logical vector (2-level)
+cps$citizen_log <- NA
+cps$citizen_log[cps$citizen_chr == "us-born"] <- TRUE
+cps$citizen_log[cps$citizen_chr == "born abroad of american parents"] <- TRUE
+cps$citizen_log[cps$citizen_chr == "naturalized citizen"] <- TRUE
+cps$citizen_log[cps$citizen_chr == "not a citizen"] <- FALSE
+class(cps$citizen_log) #check
+table(cps$citizen_log)
+#TRUE = citizen
+#FALSE = not citizen
+
+#------------------------------------------------------------------#
+
+#Spouse of person
+# (1) Factor
+class(cps$citizen_sp) #factor
+table(cps$citizen_sp) #need to recode
+cps$citizensp_factor <- cps$citizen_sp #create a factor variable
+levels(cps$citizensp_factor) #Check levels and replace labels
+levels(cps$citizensp_factor)[5] <- NA
+levels(cps$citizensp_factor)[1] <- "us-born"
+table(cps$citizensp_factor) #check
+
+# (2) Convert to character
+cps$citizensp_chr <- as.character(cps$citizensp_factor)
+table(cps$citizensp_chr)
+
+# (3) Convert to logical vector (2-level)
+cps$citizensp_log <- NA
+cps$citizensp_log[cps$citizensp_chr == "us-born"] <- TRUE
+cps$citizensp_log[cps$citizensp_chr == "born abroad of american parents"] <- TRUE
+cps$citizensp_log[cps$citizensp_chr == "naturalized citizen"] <- TRUE
+cps$citizensp_log[cps$citizensp_chr == "not a citizen"] <- FALSE
+class(cps$citizensp_log) #check
+table(cps$citizensp_log)
+#TRUE = citizen
+#FALSE = not citizen
+```
+
+####(3) Hispanic (ethnicity)
+This variable was converted to character and logical vectors.
+```{r, eval=FALSE}
+# (1) Factor
+class(cps$hispan)  #factor
+table(cps$hispan)  #check
+cps$hispan_factor <- cps$hispan
+levels(cps$hispan_factor)
+levels(cps$hispan_factor)[17] <- NA #N/A
+levels(cps$hispan_factor)[16] <- NA #do not know
+levels(cps$hispan_factor)[12:15] <- "central american"
+levels(cps$hispan_factor)[8:11] <- "other latino"
+levels(cps$hispan_factor)[2:7] <- "mexican"
+levels(cps$hispan_factor)[1] <- "not latino"
+table(cps$hispan_factor) #check
+
+#(2) Convert to character vector (4-level)
+cps$latino_chr <- as.character(cps$hispan_factor)
+class(cps$latino_chr) #check 
+table(cps$latino_chr) #check
+
+#(3) Convert to logical vector (2-level)
+cps$latino_log <- NA
+cps$latino_log[cps$latino_chr == "central american"] <- TRUE
+cps$latino_log[cps$latino_chr == "mexican"] <- TRUE
+cps$latino_log[cps$latino_chr == "other latino"] <- TRUE
+cps$latino_log[cps$latino_chr == "not latino"] <- FALSE
+class(cps$latino_log) #check
+table(cps$latino_log)
+#TRUE = citizen
+#FALSE = not citizen
+```
+
+####(4) Race
+This variable was converted to character vector and Hispanic/Latinx was added to it.
+```{r, eval=FALSE}
+# (1) Factor
+class(cps$race) #factor
+table(cps$race)
+cps$race_factor <- cps$race #create factor with my edits
+levels(cps$race_factor) #check the levels or the unique code for each
+levels(cps$race_factor)[29] <- NA
+levels(cps$race_factor)[7:28] <- "other"
+levels(cps$race_factor)[4:6] <- "asian, pacific islander"
+levels(cps$race_factor)[3] <- "other"
+levels(cps$race_factor)[2] <- "black"
+levels(cps$race_factor)[1] <- "white"
+table(cps$race_factor)
+
+#(2) Convert to character vector (4-level)
+cps$race_chr <- as.character(cps$race_factor)
+table(cps$race_chr) #inspect
+class(cps$race_chr) #character
+
+#(3) Overwrite race to add latino if latino is true
+cps$race_chr[cps$latino_log==T]<-"latino"
+table(cps$race_chr) #Inspect (again)
+```
+
+####(5) Education 
+This variable was converted to character and factor vectors.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$educ)  #factor 
+table(cps$educ)
+cps$educ_factor <- cps$educ
+levels(cps$educ_factor)
+levels(cps$educ_factor)[36] <- NA
+levels(cps$educ_factor)[33:35] <- "master's, professional, or doctoral"
+levels(cps$educ_factor)[28:32] <- "bachelor's degree"
+levels(cps$educ_factor)[25:27] <- "associate's degree"
+levels(cps$educ_factor)[22:24] <- "some College"
+levels(cps$educ_factor)[21] <- "high school diploma"
+levels(cps$educ_factor)[3:20] <- "less than high school"
+levels(cps$educ_factor )[2] <- NA #need to check this - it says it is left blank or niu (who are they)
+levels(cps$educ_factor)[1] <- NA
+table(cps$educ_factor)
+
+# (2) Convert to character (6-options)
+cps$educ_chr <- as.character(cps$educ_factor)
+class(cps$educ_chr)
+table(cps$educ_chr)
+```
+
+####(6) Gender
+This variable was converted to character and logical vectors.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$sex)   #factor
+table(cps$sex)   #Female = 2, Male = 1, niu
+levels(cps$sex)
+cps$female_factor <- cps$sex
+levels(cps$female_factor)[3] <- NA
+levels(cps$female_factor) #check again
+table(cps$female_factor) #check
+
+#(1) Convert to character
+cps$female_chr<-as.character(cps$female_factor)
+class(cps$female_chr)
+table(cps$female_chr)
+
+#(2) Convert to logical
+cps$female_log <- NA
+cps$female_log[cps$female_chr == "female"] <- TRUE
+cps$female_log[cps$female_chr == "male"] <- FALSE
+class(cps$female_log)
+table(cps$female_log)
+```
+
+####(7) Age
+This variable was converted to character vector and we also kept it as an integer vector.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$age) #factor
+table(cps$age) #ranges from 0 - 85
+levels(cps$age) #some adnormal things; "under 1 year"; 
+cps$age_factor <- cps$age
+table(cps$age_factor)
+levels(cps$age_factor)[1] <- "0" #convert the individuals that are less than 1 to 0
+summary(cps$age_factor)
+
+cps$age_factor2 <- cps$age_factor #create another one because you will make into categories
+levels(cps$age_factor2)  #need to start at 51 becaue of way factor is set up
+  levels(cps$age_factor2)[66:100] <- "65 and over"
+  levels(cps$age_factor2)[61:65] <- "60 to 64 years"
+  levels(cps$age_factor2)[56:60] <- "55 to 59 years"
+  levels(cps$age_factor2)[51:55] <- "50 to 54 years"
+  levels(cps$age_factor2)[1:50] <-  NA #"under 50"
+  
+table(cps$age_factor2)
+
+#(2) Convert to character
+cps$age_chr <- as.character(cps$age_factor2)
+table(cps$age_chr)
+
+#(3) Convert to numeric
+cps$age_num<- as.numeric(cps$age_factor) - 1 
+#subract to include the children under 1 (coded as 0) because if not it adds 1 to each of the ages 
+table(cps$age_num)
+table(cps$age_num >= 50) #58486 equal or greater 50 years old
+
+#(4) Convert to integer
+cps$age_int<- as.integer(cps$age_factor) -1 
+table(cps$age_int)
+table(cps$age_int >= 50)
+```
+
+#### (8) Year Migrated
+This variable was converted to character and factor vectors.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$yrimmig) #factor
+table(cps$yrimmig) #Need to get rid of 0 = not in universe/not migrants
+levels(cps$yrimmig)
+
+cps$yrimmig_factor <- cps$yrimmig
+levels(cps$yrimmig_factor)
+  levels(cps$yrimmig_factor)[33:39] <- "2010s"
+  levels(cps$yrimmig_factor)[22:32] <- "2000s"
+  levels(cps$yrimmig_factor)[13:21] <- "1990s"
+  levels(cps$yrimmig_factor)[8:12] <- "1980s"
+  levels(cps$yrimmig_factor)[2:7] <- "Before 1980"
+  levels(cps$yrimmig_factor)[1] <- NA #not in universe (niu)
+table(cps$yrimmig_factor)  
+```
+
+#### (9) Marital Status
+This variable was converted to character and factor vectors.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$marst)  #factor
+table(cps$marst)
+levels(cps$marst)
+
+cps$marst_factor <- cps$marst
+levels(cps$marst_factor)[8] <- NA 
+  levels(cps$marst_factor)[7] <- "widowed or divorced"
+  levels(cps$marst_factor)[6] <- "never married/single"
+  levels(cps$marst_factor)[5] <- "widowed or divorced"
+  levels(cps$marst_factor)[4] <- "widowed or divorced"
+  levels(cps$marst_factor)[3] <- "separated"
+  levels(cps$marst_factor)[1:2] <- "married"
+table(cps$marst_factor)
+
+#(2) Convert to character
+cps$marst_chr<-as.character(cps$marst_factor)
+class(cps$marst_chr)
+table(cps$marst_chr)
+```
+
+####(10) Nativity
+This variable was converted to a character vector.
+```{r, eval=FALSE}
+class(cps$nativity) #factor
+table(cps$nativity)
+levels(cps$nativity)
+
+#(1) Convert to character
+cps$nat_chr<-as.character(cps$nativity)
+class(cps$nat_chr)
+table(cps$nat_chr)
+```
+
+####(11) Birthplace (foreign-born)
+This variable was converted to character and factor vectors.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$bpl)  #factor
+table(cps$bpl)
+
+cps$bpl_factor <- cps$bpl
+levels(cps$bpl_factor)
+  levels(cps$bpl_factor)[173] <- NA
+  levels(cps$bpl_factor)[172] <- "other" 
+  levels(cps$bpl_factor)[164:171] <- "australia/oceania" 
+  levels(cps$bpl_factor)[136:163] <- "africa"
+  levels(cps$bpl_factor)[93:135] <- "asia" 
+  levels(cps$bpl_factor)[92] <- "europe"
+  levels(cps$bpl_factor)[91] <- "asia"  #ussr
+  levels(cps$bpl_factor)[47:90] <- "europe"
+  levels(cps$bpl_factor)[34:46] <- "south america"
+  levels(cps$bpl_factor)[21:33] <- "carribbean"
+  levels(cps$bpl_factor)[20] <- "cuba" 
+  levels(cps$bpl_factor)[12:19] <-"central america"
+  levels(cps$bpl_factor)[11] <- "mexico"
+  levels(cps$bpl_factor)[10] <- "north america"
+  levels(cps$bpl_factor)[9] <- "carribbean"
+  levels(cps$bpl_factor)[8] <- "canada"
+  levels(cps$bpl_factor)[2:7] <- "united states, territories" 
+  levels(cps$bpl_factor)[1] <- "united states" 
+table(cps$bpl_factor)
+
+#(2) Convert to character
+cps$bpl_chr<-as.character(cps$bpl_factor) #making a copy so I can recode the numerics
+table(cps$bpl_chr)
+```
+
+
+####(12) Occupation
+This variable was converted to character and factor vectors. *Note:* The only variables used were those that we could theoretically argue required legal status.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$occ2010)  #factor
+levels(cps$occ2010)
+
+cps$occ_factor <- cps$occ2010
+  levels(cps$occ_factor)[454:457] <- "military"
+  levels(cps$occ_factor)[441] <- "transportation inspectors" 
+  levels(cps$occ_factor)[434:438] <- "transportation: inspectors, bus/ambulance drivers, flight attendants"
+  levels(cps$occ_factor)[426:429] <- "transportation: inspectors, bus/ambulance drivers, flight attendants"
+  levels(cps$occ_factor)[413] <- "medical"
+  levels(cps$occ_factor)[261:263] <- "post office" #need to be citizen, lpr 
+  levels(cps$occ_factor)[164:167] <- "law enforcement" 
+  levels(cps$occ_factor)[129:163] <- "medical"
+  levels(cps$occ_factor)[102:112] <- "teachers with licenses"
+  levels(cps$occ_factor)[99:101] <- "lawyers and legal" 
+levels(cps$occ_factor)
+#here you united certain jobs that theoretically require legal status
+  
+#(2) Convert to character and take out these labels in a logical T/F
+cps$occ_chr <- as.character(cps$occ_factor)
+class(cps$occ_chr)
+
+cps$occlegal_log <- F   #False if we cannot make a theoretical arguement that it requires legal status; True if we are sure it requires legal status 15277 
+cps$occlegal_log[cps$occ_chr == "military"] <- T
+cps$occlegal_log[cps$occ_chr == "transportation inspectors"] <- T
+cps$occlegal_log[cps$occ_chr == "transportation: inspectors, bus/ambulance drivers, flight attendants"] <- T
+cps$occlegal_log[cps$occ_chr == "medical"] <- T
+cps$occlegal_log[cps$occ_chr == "post office"] <- T
+cps$occlegal_log[cps$occ_chr == "law enforcement"] <- T
+cps$occlegal_log[cps$occ_chr == "teachers with licenses"] <- T
+cps$occlegal_log[cps$occ_chr == "lawyers and legal"] <- T
+table(cps$occlegal_log)
+
+```
+
+####(13) Class of Worker
+This variable was kept as a factor vector.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$classwkr) #factor
+table(cps$classwkr)
+
+cps$classwkr_factor <- cps$classwkr
+levels(cps$classwkr_factor)
+  levels(cps$classwkr_factor)[15] <- NA
+  levels(cps$classwkr_factor)[14] <- "unpaid family worker"
+  levels(cps$classwkr_factor)[12:13] <- "local, state, federal government"
+  levels(cps$classwkr_factor)[11] <- "military"
+  levels(cps$classwkr_factor)[10] <- "local, state, federal government"
+  levels(cps$classwkr_factor)[9] <- "local, state, federal government"
+  levels(cps$classwkr_factor)[5:8] <- "wages"
+  levels(cps$classwkr_factor)[2:4] <- "self-employed"
+  levels(cps$classwkr_factor)[1] <- NA
+table(cps$classwkr_factor)
+```
+
+####(14) Covered by Medicaid
+This variable was converted to character, factor, and logical vectors.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$caid)
+table(cps$caid)
+
+#(2) Convert to character
+cps$caid_chr<-as.character(cps$caid)
+class(cps$caid_chr)
+table(cps$caid_chr)
+
+#(3) Convert to logical
+cps$caid_log <- ifelse(cps$caid == "yes", TRUE, FALSE) #conver to logical - if yes than equal to TRUE
+class(cps$caid_log)
+table(cps$caid_log)
+```
+
+####(15) Got WIC (WIC, the Special Supplemental Nutrition Program for Women, Infants and
+Children) & Food stamps
+These variables were converted to character, factor, and logical vectors.
+```{r, eval=FALSE}
+table(cps$gotwic)
+#0; NIU ~ men
+#1: No - 48233
+#2: Yes - 2241
+cps$gotwic_factor <- cps$gotwic
+levels(cps$gotwic_factor)
+  levels(cps$gotwic_factor)[1] <- NA #niu - not in universe
+  table(cps$gotwic_factor)
+
+#(1) Convert to logical
+cps$gotwic_log <- ifelse(cps$gotwic == "yes", TRUE, FALSE) #note that NIU is under false (including men)
+class(cps$gotwic_log) #check
+table(cps$gotwic_log)
+
+#(2) Convert to character
+cps$gotwic_chr <- as.character(cps$gotwic_factor)
+class(cps$gotwic_chr) #check
+table(cps$gotwic_chr)
+
+#Food Stamps
+#(1) Factor
+class(cps$foodstmp) #factor
+table(cps$foodstmp)
+levels(cps$foodstmp)
+  levels(cps$foodstmp)[1] <- NA #niu = 0
+    table(cps$foodstmp)
+#(2) Convert to logical
+cps$foodstmp_log <- ifelse(cps$foodstmp == "yes", TRUE, FALSE)
+table(cps$foodstmp_log)
+
+```
+
+####(16) Covered by Medicaid and/or Medicare 
+These variables were converted to character, factor, and logical vectors.
+```{r, eval=FALSE}
+#Medicaid Coverage
+class(cps$himcaid)  #factor
+table(cps$himcaid)
+
+#(1) Convert to logical
+cps$himcaid_log <- ifelse(cps$himcaid == "yes", TRUE, FALSE)
+class(cps$himcaid_log)
+table(cps$himcaid_log)  #check
+
+#------------------------------------------------------------------#
+
+#Medicare Coverage
+class(cps$himcare)  #factor
+table(cps$himcare)
+levels(cps$himcare)
+
+cps$himcare_factor <- cps$himcare
+  levels(cps$himcare_factor)
+  levels(cps$himcare_factor)[1] <- NA
+table(cps$himcare_factor)
+  
+#(1) Convert to logical
+cps$himcare_log <- ifelse(cps$himcare == "yes", TRUE, FALSE)
+class(cps$himcare_log)
+table(cps$himcare_log)  #Check
+```
+
+####(17) Receives Social Security benefits or SSI
+These variables were converted to character, factor, and logical vectors.
+```{r, eval=FALSE}
+#Social Security benefits
+class(cps$incss)  #integer
+#table(cps$incss)
+summary(cps$incss)
+summary(cps$incss == 0)  #no income from issi
+summary(cps$incss > 0 & cps$incss < 99999) #includes anyone that gets an amount from incss
+summary(cps$incss == 99999) #not in universe
+
+#(1) Convert to logical
+cps$incss_log <- TRUE
+cps$incss_log[cps$incss <= 0] <- FALSE
+cps$incss_log[cps$incss == 99999] <- NA
+table(cps$incss_log)  #check
+#------------------------------------------------------------------#
+
+#SSI
+class(cps$incssi) #integer
+summary(cps$incssi)
+summary(cps$incssi == 99999) #not in universe
+summary(cps$incssi == 0)  #do not recieve = 0
+summary(cps$incssi > 0 & cps$incssi < 99999) #anyone that gets an amount from incssi
+#(1) Convert to logical
+cps$incssi_log <- TRUE
+cps$incssi_log[cps$incssi <= 0] <- FALSE
+cps$incssi_log[cps$incssi == 99999] <- NA
+table(cps$incssi_log) #check
+```
+
+####(18) Miltary Info
+These variables were converted to logical vectors.
+```{r, eval=FALSE}
+#Military Insurance
+class(cps$hichamp)  #factor
+table(cps$hichamp)
+#(1) Convert to logical
+cps$hichamp_log <- ifelse(cps$hichamp == "yes", TRUE, FALSE)
+table(cps$hichamp_log)
+
+#------------------------------------------------------------------#
+
+#Veteran
+class(cps$vetstat)  #factor
+table(cps$vetstat)
+
+cps$vetstat_factor <- cps$vetstat
+levels(cps$vetstat_factor) #check
+  levels(cps$vetstat_factor)[4] <- NA   #unknown
+    levels(cps$vetstat_factor)[3] <- "yes" 
+    levels(cps$vetstat_factor)[2] <- "no"
+    levels(cps$vetstat_factor)[1] <- NA
+table(cps$vetstat_factor)
+
+#(1) Convert to logical
+cps$vetstat_log <- ifelse(cps$vetstat_factor =="yes", TRUE, FALSE)
+table(cps$vetstat_log)  #check
+```
+
+####(19) Person resides in public housing or receives rental subsidies (or their spouse does)
+These variables are at the household-level, not on the person-level (that is why you need to include spouse in the language). These variables were converted to logical vectors.
+```{r, eval=FALSE}
+#Lives in public housing
+#(1) Factor
+class(cps$pubhous)  #factor
+table(cps$pubhous)  #check
+
+cps$pubhous_factor <- cps$pubhous
+levels(cps$pubhous_factor)
+levels(cps$pubhous_factor)[1] <- NA
+table(cps$pubhous_factor)
+
+#(2) Convert to logical
+cps$pubhous_log <- ifelse(cps$pubhous_factor =="yes", TRUE, FALSE)
+table(cps$pubhous_log)  #check
+
+#Paying lower rent due to government subsidy
+#(1) Factor
+class(cps$rentsub)  #factor
+table(cps$rentsub)  #check
+
+cps$rentsub_factor <- cps$rentsub
+levels(cps$rentsub_factor)
+  levels(cps$rentsub_factor)[1] <- NA
+table(cps$rentsub_factor)
+
+#(2) Convert to logical
+cps$rentsub_log <- ifelse(cps$rentsub_factor =="yes", TRUE, FALSE)
+table(cps$rentsub_log)  #check
+```
+
+####(20) Geographic Area
+This variable was converted to character vector.
+```{r, eval=FALSE}
+#(1) Factor
+class(cps$statefip) #factor
+table(cps$statefip)
+
+cps$statefip_factor <- cps$statefip
+levels(cps$statefip_factor)
+levels(cps$statefip_factor)[52:75] <- NA  #They have "0" and they are more like areas/not states
+table(cps$statefip_factor)
+
+#(2) Convert to character
+cps$state_chr <- as.character(cps$statefip_factor)
+class(cps$state_chr)
+table(cps$state_chr)
+```
+
+####(21) Mexican-origin Immigrants
+This isolated the foreign-born immigrants born in Mexico.
+```{r, eval=FALSE}
+class(cps$bpl_chr)
+table (cps$bpl_chr)
+
+mexico_bpl <- cps$bpl_chr == "mexico"
+table(mexico_bpl) #check
+class(mexico_bpl) #logical
+```
+
+###$ Variable of interest: Legal status
+First, I created a logical variable (undoc_log) where TRUE means undocumented and FALSE identifies immigrants with legal status.
+```{r, eval=FALSE}
+#Has Legal Status
+cps$undoc_log <- TRUE #58486 observations
+
+cps$undoc_log[cps$citizen_log == T] <- F #Person-level Citizen
+cps$undoc_log[cps$citizensp_log == T] <- F #Spouse Citizen
+cps$undoc_log[cps$yrimmig_factor == "Before 1980"] <- F #Came before 1980
+
+cps$undoc_log[cps$incss_log == T] <- F #SS benefits
+cps$undoc_log[cps$incssi_log == T] <- F #SSI benefits
+cps$undoc_log[cps$himcaid_log == T] <- F #Medicaid
+cps$undoc_log[cps$himcare_log == T] <- F #Medicare
+
+cps$undoc_log[cps$hichamp_log == T] <- F #Military health insurance
+cps$undoc_log[cps$vetstat_log == T] <- F #Veteran
+cps$undoc_log[cps$classwkr_factor == "military"] <- F #Same as above
+cps$undoc_log[cps$classwkr_factor == "local, state, federal government"] <- F #Government Sector (federal, military, state, or local) #1284
+
+cps$undoc_log[cps$pubhous_log == T] <- F #public housing
+cps$undoc_log[cps$rentsub_log == T] <- F #subsidy
+cps$undoc_log[cps$bpl == "cuba"] <- F #born in Cuba
+cps$undoc_log[cps$occlegal_log == T] <- F   #Occupation requires licencing 
+
+table(cps$undoc_log) #Check the variable
+sum(cps$undoc_log*cps$asecwt) #Times the undoc variable with the individual_level cps weights
+#1,958,698 people (over estimated because of all population there is an estimated 11.5 - 11.7 per literature - probably occupation)
+
+#Add food stamps - now there seems to be an undercount - 1,825,436
+cps$undoc_log[cps$foodstmp_log == T] <- F #if they get food stamps (at household-level) 1082
+table(cps$undoc_log) #check - undercount
+sum(cps$undoc_log*cps$asecwt) #Times the undoc variable with the individual_level cps weights
+sum((cps$undoc_log == T)*cps$asecwt) #check another way
+```
+
+Now, I will reconstruct the citizen variable to incorporate undocumented status.
+```{r, eval=FALSE}
+table(cps$citizen_factor) #factor
+levels(cps$citizen_factor)  #get the number of levels
+
+cps$legalstat_factor <- cps$citizen_factor #create a new var
+  levels(cps$legalstat_factor)
+  levels(cps$legalstat_factor)[3:4] <- "legal immigrants"
+  levels(cps$legalstat_factor)[1:2] <- "us-born and born abroad"
+  table(cps$legalstat_factor)
+
+#(1) Convert to character, add undocumented population, and afterwards rename non-citizen to legal non-citizen
+cps$legalstat_chr <- as.character(cps$legalstat_factor) #convert to character 
+cps$legalstat_chr[cps$undoc_log == T] <- "undocumented" #add undoc population - convert those without legal status
+cps$legalstat_chr[cps$legalstat_chr == "not a citizen"] <- "legal immigrants" #change the names
+table(cps$legalstat_chr)
+```
+
+###Weights
+For most person-level analyses of the ASEC samples, apply the ASECWT variable. ASECWT gives the population represented by each individual in the sample.  The sample represents 111,962,818 (of 320,371,997 people ~U.S. population - according to full cps data for 2017) of individuals 50 years and older in 2017.
+```{r, eval=FALSE}
+sum(cps$asecwt)
+```
+
+####Overall Calculations with Weights
+```{r, eval=FALSE}
+#check that weights are working correctly with undoc variable 
+sum((cps$undoc_log==F)*cps$asecwt) #110,137,383
+sum((cps$undoc_log==T)*cps$asecwt) #1,825,436
+count <- 1825436 + 110137383
+count #111962819
+
+sum((cps$legalstat_chr == "legal immigrants" & cps$nat_chr == "foreign born")*cps$asecwt) #14,501,056
+sum((cps$legalstat_chr == "undocumented" & cps$nat_chr == "foreign born")*cps$asecwt) #1,813,288 undocumented
+sum((cps$legalstat_chr == "us-born and born abroad")*cps$asecwt) #95,595,635 includes born abroad
+
+sum((cps$legalstat_chr == "legal immigrants" & mexico_bpl == T)*cps$asecwt) #3,017,767
+sum((cps$legalstat_chr == "undocumented" & mexico_bpl == T)*cps$asecwt) #743,736 undocumented
+sum((cps$legalstat_chr == "us-born and born abroad" & cps$latino_chr == "mexican")*cps$asecwt) #2,950,808 includes born abroad
+```
+
+####Subset Data for Age Pyramids
+```{r, eval=FALSE}
+#Group all indviduals by legal status (includes nat. citizens and residents)
+legalfor_df <- filter(cps, nat_chr == "foreign born" & legalstat_chr == "legal immigrants")
+#Group all individuals by undocumented
+undocfor_df <- filter(cps, nat_chr == "foreign born" & legalstat_chr == "undocumented")
+#Group us-born 
+usborn_df <- filter(cps, legalstat_chr == "us-born and born abroad")
+
+###These graphs will focus on Mexican foreign-born by legal status
+# Group all individuals by mexican_bpl and age 
+usbornmex_df <- filter(cps, latino_chr == "mexican" & legalstat_chr == "us-born and born abroad")
+# Group all individuals by mexican_bpl and age 
+legalmex_df <- filter(cps, mexico_bpl == T & nat_chr == "foreign born" & legalstat_chr == "legal immigrants")  #create dataset with mexicans only - over 50 years old
+# Group all individuals by mexican_bpl and undoc
+undocmex_df <- filter(cps, mexico_bpl == T & nat_chr == "foreign born" & legalstat_chr == "undocumented")  #create dataset with mexicans only - over 50 years old
+```
+
+###Saving Files and Data Preparation for Machine Learning
+```{r, eval=FALSE}
+#Save the data as .csv
+write.csv(cps, "cps17.csv")
+#You need to make sure you save different years of the CPS accordingly - for example, cps16, cps17
+
+#create another data set for cps17 machine learning
+myvars <- c("year", "serial", "month", "cpsid", "asecflag", "asecwth", "statefip", "metro",
+            "metarea", "county", "statecensus", "ownershp","pubhous", "rentsub", "foodstmp", "pernum", "cpsidp",
+            "asecwt", "age", "sex", "race", "marst", "vetstat", "famsize", "nchild", "bpl", "yrimmig", "citizen", "mbpl",
+            "fbpl", "nativity", "hispan", "empstat", "occ2010", "classwkr", "educ", "incss", "incssi", "himcaid",
+            "himcare", "hichamp", "caid", "gotwic", "bpl_sp", "yrimmig_sp", "citizen_sp", "mbpl_sp", "fbpl_sp",
+            "nativity_sp", "hispan_sp", "undoc_log")
+
+cps17_mlearning <- cps[myvars] #make variables into new dataframe
+write.csv(cps17_mlearning, "cps17_mlearning.csv") #save for machine learning - all original variables plus undoc_log
+
+#Prepare 2016 data
+cps16_mlearning <- read.dta13("/Users/isabelgarcia/Dropbox/IPUMS_CPS/CPS_Data_2017/cps16_00020.dta")
+write.csv(cps16_mlearning, "cps16_mlearning.csv")
+```
