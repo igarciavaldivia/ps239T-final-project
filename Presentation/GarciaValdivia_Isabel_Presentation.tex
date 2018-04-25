@@ -1,0 +1,221 @@
+\documentclass{beamer}	%So you want to make a presentation in LaTeX using beamer
+\mode<presentation> {
+	\usetheme[sectionpage=none]{metropolis} %Eliminates progress slide before each section
+	%\usetheme{metropolis}	% Use metropolis theme basic
+}
+
+%Load Packages
+\usepackage{hyperref} %lets you embed hyperlinks into your document
+\usepackage{graphicx} %lets you add pictures
+\graphicspath{{/Users/isabelgarcia/Desktop/ps239T-final-project/Presentation/}} %set location of pictures
+\usepackage{subcaption} %adds captions and multiple figures
+\usepackage{caption}
+\captionsetup{font=footnotesize} %change the font of captions
+\usepackage[textfont={scriptsize}]{caption} %used to make captions smaller throughout the presentation unless you override
+\usepackage{graphicx} %used to make table smaller
+
+
+%We can add our title info here:
+\title{Aging Immigrant Population by Legal Status}
+\date{\today}	% set automatically to today's date
+\author{Isabel Garc\'ia Valdivia}
+\institute{University of California, Berkeley\\
+Department of Sociology}
+
+\begin{document}
+  \maketitle
+  %Making a table of contents is still super easy
+  \tableofcontents
+  \clearpage
+  
+\section{Research Question}
+  \begin{frame}{Research Question}
+What are the socio-demographic characteristics of older (aging) adults in the U.S.?
+\begin{itemize}
+	\item How does it differ by legal status and gender?
+	\item Compared to Mexicans and Mexican-origin immigrants?
+\end{itemize}
+  \end{frame}
+
+\section{Data and Analysis}
+ 	\begin{frame}{Data}
+		\begin{itemize}
+			\item Dataset
+				\begin{itemize}
+					\item Current Population Survey\textsc{\char13}s (CPS) Annual Social and Economic Supplement (ASEC), 2016 and 2017
+				\end{itemize}
+			\item Tools
+				\begin{itemize}
+					\item Processing and Visualizations in R
+					\item Machine Learning in R
+					\item Presentation in LaTeX
+				\end{itemize}
+		\end{itemize}
+	\end{frame}
+	\begin{frame}{Analysis}
+		\begin{itemize}
+			\item Descriptive Analysis
+			\item Imputation of Legal Status
+				\begin{itemize}
+					\item Residual Method (Bachmeier, Van Hook, and Bean 2014; Passel 2007; Passel and Cohn 2009; Warren 2014) using CPS 2017
+					\item Machine Learning: Classification
+					\begin{itemize}
+						\item CPS 2017 as training data
+						\item CPS 2016 as test data
+					\end{itemize}
+				\end{itemize}
+		\end{itemize}
+	\end{frame}
+
+\section{Results}
+
+\begin{frame}{Results}
+\begin{table}[ht]
+	\centering
+Older Adults by Legal Status
+\scalebox{0.8}{
+\begin{tabular}{llrrrr}
+	\hline
+	& Age(s) & legal immigrants & undocumented & us-born \\ 
+	\hline
+	& 50 to 54 years & 22.1\% & 40.1\% & 18.2\% &  \\ 
+	& 55 to 59 years & 19.2\% & 27.3\% & 19.4\% &  \\ 
+	& 60 to 64 years & 16.2\% & 19.7\% & 17.5\% &  \\ 
+	& 65 and over & 42.5\% & 12.9\% & 44.8\% &  \\ 
+	& Total  & 100.0\% & 100.0\% & 100.0\% &  \\ 
+	& \\
+	& \% Within Older Adults & 13.0\% & 1.6\% & 85.4\% &  \\ 
+	\hline
+	\end{tabular}}
+	\caption{Author's Tabulations. Source: IPUMS Current Population Survey, 2017}
+\end{table}
+\end{frame}
+
+\begin{frame}{Results}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=4in]{{g1_boxplot.png}}
+		\caption{Distribution of Older Adults (50 years and older) in the U.S. by Legal Status (Source: IPUMS Current Population Survey, 2017)}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Results}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=4in]{{g2_undocimmigrants.png}}
+	\caption{Undocumented Older Adults (50 years old and older) in the U.S. by Age and Gender, 1.8 million (Source: IPUMS Current Population Survey, 2017)}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Results}
+\begin{figure}[h] % h = Place the float here
+	\centering
+	\captionsetup[subfigure]{font=scriptsize,labelfont=scriptsize} %changes the subcaption into smaller font in these tables only
+	\begin{subfigure}[b]{0.4\linewidth}
+		\includegraphics[width=\linewidth]{{g1_legalimmigrants.png}}
+		\caption{Legal Immigrants (3.8 million).}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.4\linewidth}
+		\includegraphics[width=\linewidth]{{g2_undocimmigrants.png}}
+		\caption{Undocumented (1.8 million).}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.4\linewidth}
+		\includegraphics[width=\linewidth]{{g3_usborn.png}}
+		\caption{U.S. Born (95.6 million).}
+	\end{subfigure}
+	\caption{Older Adults (50 years old and older) in the U.S. by Age, Gender, and Legal Status (Source: IPUMS Current Population Survey, 2017)}
+	\label{fig:Older Adults}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Results}
+\begin{figure}[h] % h = Place the float here
+	\centering
+	\captionsetup[subfigure]{font=scriptsize,labelfont=scriptsize} %changes the subcaption into smaller font in these tables only
+	\begin{subfigure}[b]{0.4\linewidth}
+		\includegraphics[width=\linewidth]{{g5_legalmex.png}}
+		\caption{Legal Immigrants (3 million).}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.4\linewidth}
+		\includegraphics[width=\linewidth]{{g6_undocmex.png}}
+		\caption{Undocumented (700,000).}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.4\linewidth}
+		\includegraphics[width=\linewidth]{{g4_usbornmex.png}}
+		\caption{U.S. Born (2.9 million).}
+	\end{subfigure}
+	\caption{Mexican Older Adults (50 years old and older) in the U.S. by Age, Gender, and Legal Status (Source: IPUMS Current Population Survey, 2017)}
+	\label{fig:Mexican Older Adults}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Results}
+\begin{columns}[T] % align columns
+\begin{column}{.48\textwidth}
+\textbf{Machine Learning in R}
+Influential Variables
+	\begin{itemize}
+		\item Citizenship (*Variable of most importance)
+		\item Year of migration
+		\item Recipient of Medicare 
+		\item Recipient of Medicaid
+		\item Citizenship of spouse
+		\item Birthplace
+		\item Recipient of Food Stamp
+		\item Occupation
+		\item Class of worker
+		\item Veteran Status
+	\end{itemize}
+\end{column}%
+\begin{column}{.48\textwidth}
+	\textbf{Decision Tree Diagram}
+	\begin{figure}[h] % h = Place the float here
+		\centering
+		\includegraphics[width=3in]{{binary_model.png}}
+		\caption{Decision Tree. (Source: IPUMS Current Population Survey, 2017)}
+	\end{figure}
+\end{column}%
+\end{columns}
+\end{frame}
+
+\begin{frame}{Results}
+\textbf{Influential Variables: Output}
+\centering
+\includegraphics[width=4.5in]{{decision_tree_output.png}}
+\end{frame}
+
+\section{Challenges}
+  \begin{frame}{Challenges}
+	\begin{itemize}
+		\item Theoretical Assumptions of Imputation of Legal Status
+		\item Machine Learning Method
+	\end{itemize}
+\end{frame}
+
+\section{Next Steps}
+\begin{frame}{Next Steps}
+\begin{itemize}
+	\item Re-weighting data (over- and undercount)
+	\item Continue to explore best method for machine learning 
+	\item Apply to more years, CPS AESC (2016 and prior years)
+	\item Apply these methods to the American Community Survey (ACS; 1\% sample or 3 million households) because it has more observations. I am focusing on a very specific group.
+\end{itemize}
+\end{frame}
+
+\section{Appendix}
+\begin{frame} [shrink=20]{Appendix} %shrink - makes font smaller
+Residual Method Variables
+\begin{itemize}
+	\item That person arrived before 1980;
+	\item That person is a citizen;
+	\item That person receives Social Security benefits, SSI, Medicaid, Medicare, or Military Insurance;
+	\item That person is a veteran, or is currently in the Armed Forces;
+	\item That person works in the government sector;
+	\item That person resides in public housing or receives rental subsidies, or that person is a spouse of someone who resides in public housing or receives rental subsidies;
+	\item That person was born in Cuba (as practically all Cuban immigrants were granted refugee status before 2017);
+	\item That person's occupation requires some form of licensing (such as physicians, registered nurses, air traffic controllers, and lawyers);
+	\item That person's spouse is a legal immigrant or citizen.
+\end{itemize}
+\end{frame}
+
+\end{document}
