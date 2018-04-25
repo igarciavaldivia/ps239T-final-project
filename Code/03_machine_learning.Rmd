@@ -5,10 +5,10 @@ date: "4/25/2018"
 output: html_document
 ---
 
-#PART III. MACHINE LEARNING ANALYSIS
+# PART III. MACHINE LEARNING ANALYSIS
 Using machine learning as a method to estimate $f$, in this case legal status, categorical variable 0/1 (in other words - F/T) for CPS 2016 data using CPS 2017 data.
 
-##Load Libraries/Packages
+## Load Libraries/Packages
 ```{r, eval=FALSE}
 library(ggplot2)      #visuals
 library(rpart)
