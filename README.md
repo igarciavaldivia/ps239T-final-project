@@ -33,23 +33,23 @@ This includes figures and results and other files needed to compile the final pr
   1. GarciaValdivia_Isabel_Presentation.tex - LaTeX presentation code
   2. GarciaValdivia_Isabel_Presentation.pdf - Presentation .pdf file
   3. Necessary Files for LaTeX Files
-    * GarciaValdivia_Isabel_Presentation.aux
-    * GarciaValdivia_Isabel_Presentation.log
-    * GarciaValdivia_Isabel_Presentation.nav
-    * GarciaValdivia_Isabel_Presentation.out
-    * GarciaValdivia_Isabel_Presentation.snm
-    * GarciaValdivia_Isabel_Presentation.synctex.gz
-    * GarciaValdivia_Isabel_Presentation.toc
+      * GarciaValdivia_Isabel_Presentation.aux
+      * GarciaValdivia_Isabel_Presentation.log
+      * GarciaValdivia_Isabel_Presentation.nav
+      * GarciaValdivia_Isabel_Presentation.out
+      * GarciaValdivia_Isabel_Presentation.snm
+      * GarciaValdivia_Isabel_Presentation.synctex.gz
+      * GarciaValdivia_Isabel_Presentation.toc
   4. Necessary image files for LaTeX Presentation
-    * g1_boxplot - 1 bloxplot showing older adults (50 + years old and older) by legal status
-    * g1_legalimmigrants - Legal immigrants older adults (50 + years old and older) by gender
-    * g2_undocimmigrants - Undocumented older adults (50 + years old and older) by gender
-    * g3_usborn - US-born older adults (50 + years old and older) by gender
-    * g4_usbornmex - US-born Mexican older adults (50 + years old and older) by gender
-    * g5_legalmex - Legal immigrants Mexican older adults (50 + years old and older) by gender
-    * g6_undocmex - Undocumented Mexican older adults (50 + years old and older) by legal gender
-    * decision_tree_output.png - image of most important variables for machine learning decision tree decision
-    * binary_model.png - image of basic decision tree plot for CPS 2017
+      * g1_boxplot - 1 bloxplot showing older adults (50 + years old and older) by legal status
+      * g1_legalimmigrants - Legal immigrants older adults (50 + years old and older) by gender
+      * g2_undocimmigrants - Undocumented older adults (50 + years old and older) by gender
+      * g3_usborn - US-born older adults (50 + years old and older) by gender
+      * g4_usbornmex - US-born Mexican older adults (50 + years old and older) by gender
+      * g5_legalmex - Legal immigrants Mexican older adults (50 + years old and older) by gender
+      * g6_undocmex - Undocumented Mexican older adults (50 + years old and older) by legal gender
+      * decision_tree_output.png - image of most important variables for machine learning decision tree decision
+      * binary_model.png - image of basic decision tree plot for CPS 2017
 
 #### **More Information**
 For questions and/or concerns, please contact the creator.
