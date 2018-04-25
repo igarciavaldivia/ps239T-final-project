@@ -55,7 +55,7 @@ ggsave("g1_boxplot.png",
        dpi = 600)  #save the file as .png
 ```
 
-### Graphs 1-3: Displays graphs of older adults (50+ years) by legal status and gender.
+### Graphs 1-3: Display graphs of older adults (50+ years) by legal status and gender.
 #### Graph 1: Legal Immigrants by Age and Gender
 ```{r, eval=FALSE}
 pop_tb1 <- as.data.frame(table(legalfor_df$age_chr, legalfor_df$female_log))
@@ -151,7 +151,10 @@ g3_usborn#check graph
 ggsave("g3_usborn.png", 
        g3_usborn,
        dpi = 600)  #save the file as .png
+```
 
+### Export the tables to a single .pdf file
+```{r, eval=FALSE}
 #Export Graphs 1-3 titled olderadultsinUS.png
 olderadultsinUS <- plot_grid(g1_legalfor, g2_undocfor, g3_usborn, align = "v", nrow = 3, rel_heights = c(1/2, 1/2))
 png(file = "olderadultsinUS.png", width = 1500, height = 1000, res = 250)
@@ -159,7 +162,7 @@ plot_grid(g1_legalfor, g2_undocfor, g3_usborn, align = "v", nrow = 3, rel_height
 dev.off() #end save
 ```
 
-### Graphs 4-6: Displays graphs of Mexican older adults (50+ years) by legal status and gender.
+### Graphs 4-6: Display graphs of Mexican older adults (50+ years) by legal status and gender.
 #### Graph 4: Mexican U.S. Born Immigrants by Age and Gender
 ```{r, eval=FALSE}
 pop_tb4 <- as.data.frame(table(usbornmex_df$age_chr, usbornmex_df$female_log))

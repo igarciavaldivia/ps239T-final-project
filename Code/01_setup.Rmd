@@ -36,7 +36,7 @@ dim(cps) #check columns and rows
 colnames(cps)<-tolower(colnames(cps))
 ```
 
-##Select & CleabVariables of Interest
+## Select & Clean Variables of Interest
 The data contains 50 variables and more than 55,000 observations. We began by cleaning the data.
 
 ### Clean Variables
@@ -504,6 +504,7 @@ cps$incss_log <- TRUE
 cps$incss_log[cps$incss <= 0] <- FALSE
 cps$incss_log[cps$incss == 99999] <- NA
 table(cps$incss_log)  #check
+
 #------------------------------------------------------------------#
 
 #SSI

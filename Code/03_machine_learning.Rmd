@@ -11,8 +11,8 @@ Using machine learning as a method to estimate $f$, in this case legal status, c
 ## Load Libraries/Packages
 ```{r, eval=FALSE}
 library(ggplot2)      #visuals
-library(rpart)
-library(rpart.plot)
+library(rpart)        #decision tree 
+library(rpart.plot)   #decision tree plots
 ```
 
 #### Machine Learning: Decision trees 
