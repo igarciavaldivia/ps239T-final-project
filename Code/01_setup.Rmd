@@ -2,12 +2,14 @@
 title: "01_setup"
 author: "Isabel García Valdivia"
 date: "4/25/2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 # PART I: Data Set-Up and Cleaning.
 ## Setup environment
 I am using a R project, thus my working directory is already opened when I open my directory.  I have provided code for the manual set-up instructions below.
-```{r, eval = F}
+```{r}
 # remove all objects
 rm(list=ls())
 #Set and check directory (if you are not using a R project) - I am using a R Project, thus my directory is already set 
@@ -17,16 +19,16 @@ rm(list=ls())
 ```
 
 ## Load Libraries/Packages
-```{r, eval=FALSE}
-library(readstata13) #reads .dta Stata files constructed after Stata 12
-library(dplyr)    #cleaning data
-library(tidyr)    #cleaning data
+```{r}
+library(readstata13)  #reads .dta Stata files constructed after Stata 12
+library(dplyr)        #cleaning data
+library(tidyr)        #cleaning data
 ```
 
 
 ## Load Data Set
 The data set is from IPUMS Current Population Survey (CPS), particularly the data from the March Supplement from 2017 (we will start with 2017 data and use machine learning for 2016).
-```{r, eval=FALSE}
+```{r}
 # Read Stata file after Version 13 (see https://cran.r-project.org/web/packages/readstata13/README.html)
 cps <- read.dta13("/Users/isabelgarcia/Dropbox/IPUMS_CPS/CPS_Data_2017/cps17_00019.dta") #CPS 2017 download: cps_00019
 names(cps)  #gives you the names of all variables in data.frame
@@ -42,7 +44,7 @@ The data contains 50 variables and more than 55,000 observations. We began by cl
 ### Clean Variables
 #### (1) Year
 This variable was kept "as is".
-```{r, eval=FALSE}
+```{r}
 class(cps$year) #integer
 table(cps$year)
 
@@ -53,7 +55,7 @@ table(cps$year_num)
 
 #### (2) Citizenship
 This variable was converted to character and logical vectors. This includes the variable for individual person citizenship (named "citizen_chr" and "citizen_log") and spouse citizenship (named "citizensp_chr" and "citizensp_log").
-```{r, eval=FALSE}
+```{r}
 #Individual person
 # (1) Factor
 class(cps$citizen) #factor
@@ -109,7 +111,7 @@ table(cps$citizensp_log)
 
 #### (3) Hispanic (ethnicity)
 This variable was converted to character and logical vectors.
-```{r, eval=FALSE}
+```{r}
 # (1) Factor
 class(cps$hispan)  #factor
 table(cps$hispan)  #check
@@ -142,7 +144,7 @@ table(cps$latino_log)
 
 #### (4) Race
 This variable was converted to character vector and Hispanic/Latinx was added to it.
-```{r, eval=FALSE}
+```{r}
 # (1) Factor
 class(cps$race) #factor
 table(cps$race)
@@ -168,7 +170,7 @@ table(cps$race_chr) #Inspect (again)
 
 #### (5) Education 
 This variable was converted to character and factor vectors.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$educ)  #factor 
 table(cps$educ)
@@ -193,7 +195,7 @@ table(cps$educ_chr)
 
 #### (6) Gender
 This variable was converted to character and logical vectors.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$sex)   #factor
 table(cps$sex)   #Female = 2, Male = 1, niu
@@ -218,7 +220,7 @@ table(cps$female_log)
 
 #### (7) Age
 This variable was converted to character vector and we also kept it as an integer vector.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$age) #factor
 table(cps$age) #ranges from 0 - 85
@@ -256,7 +258,7 @@ table(cps$age_int >= 50)
 
 #### (8) Year Migrated
 This variable was converted to character and factor vectors.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$yrimmig) #factor
 table(cps$yrimmig) #Need to get rid of 0 = not in universe/not migrants
@@ -275,7 +277,7 @@ table(cps$yrimmig_factor)
 
 #### (9) Marital Status
 This variable was converted to character and factor vectors.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$marst)  #factor
 table(cps$marst)
@@ -299,7 +301,7 @@ table(cps$marst_chr)
 
 #### (10) Nativity
 This variable was converted to a character vector.
-```{r, eval=FALSE}
+```{r}
 class(cps$nativity) #factor
 table(cps$nativity)
 levels(cps$nativity)
@@ -312,7 +314,7 @@ table(cps$nat_chr)
 
 #### (11) Birthplace (foreign-born)
 This variable was converted to character and factor vectors.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$bpl)  #factor
 table(cps$bpl)
@@ -347,7 +349,7 @@ table(cps$bpl_chr)
 
 #### (12) Occupation
 This variable was converted to character and factor vectors. *Note:* The only variables used were those that we could theoretically argue required legal status.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$occ2010)  #factor
 levels(cps$occ2010)
@@ -385,7 +387,7 @@ table(cps$occlegal_log)
 
 #### (13) Class of Worker
 This variable was kept as a factor vector.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$classwkr) #factor
 table(cps$classwkr)
@@ -406,7 +408,7 @@ table(cps$classwkr_factor)
 
 #### (14) Covered by Medicaid
 This variable was converted to character, factor, and logical vectors.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$caid)
 table(cps$caid)
@@ -425,7 +427,7 @@ table(cps$caid_log)
 #### (15) Got WIC (WIC, the Special Supplemental Nutrition Program for Women, Infants and
 Children) & Food stamps
 These variables were converted to character, factor, and logical vectors.
-```{r, eval=FALSE}
+```{r}
 table(cps$gotwic)
 #0; NIU ~ men
 #1: No - 48233
@@ -460,7 +462,7 @@ table(cps$foodstmp_log)
 
 #### (16) Covered by Medicaid and/or Medicare 
 These variables were converted to character, factor, and logical vectors.
-```{r, eval=FALSE}
+```{r}
 #Medicaid Coverage
 class(cps$himcaid)  #factor
 table(cps$himcaid)
@@ -490,7 +492,7 @@ table(cps$himcare_log)  #Check
 
 #### (17) Receives Social Security benefits or SSI
 These variables were converted to character, factor, and logical vectors.
-```{r, eval=FALSE}
+```{r}
 #Social Security benefits
 class(cps$incss)  #integer
 #table(cps$incss)
@@ -522,7 +524,7 @@ table(cps$incssi_log) #check
 
 #### (18) Miltary Info
 These variables were converted to logical vectors.
-```{r, eval=FALSE}
+```{r}
 #Military Insurance
 class(cps$hichamp)  #factor
 table(cps$hichamp)
@@ -551,7 +553,7 @@ table(cps$vetstat_log)  #check
 
 #### (19) Person resides in public housing or receives rental subsidies (or their spouse does)
 These variables are at the household-level, not on the person-level (that is why you need to include spouse in the language). These variables were converted to logical vectors.
-```{r, eval=FALSE}
+```{r}
 #Lives in public housing
 #(1) Factor
 class(cps$pubhous)  #factor
@@ -583,7 +585,7 @@ table(cps$rentsub_log)  #check
 
 #### (20) Geographic Area
 This variable was converted to character vector.
-```{r, eval=FALSE}
+```{r}
 #(1) Factor
 class(cps$statefip) #factor
 table(cps$statefip)
@@ -601,7 +603,7 @@ table(cps$state_chr)
 
 #### (21) Mexican-origin Immigrants
 This isolated the foreign-born immigrants born in Mexico.
-```{r, eval=FALSE}
+```{r}
 class(cps$bpl_chr)
 table (cps$bpl_chr)
 
@@ -612,7 +614,7 @@ class(mexico_bpl) #logical
 
 #### Variable of interest: Legal status
 First, I created a logical variable (undoc_log) where TRUE means undocumented and FALSE identifies immigrants with legal status.
-```{r, eval=FALSE}
+```{r}
 #Has Legal Status
 cps$undoc_log <- TRUE #58486 observations
 
@@ -647,7 +649,7 @@ sum((cps$undoc_log == T)*cps$asecwt) #check another way
 ```
 
 Now, I will reconstruct the citizen variable to incorporate undocumented status.
-```{r, eval=FALSE}
+```{r}
 table(cps$citizen_factor) #factor
 levels(cps$citizen_factor)  #get the number of levels
 
@@ -666,12 +668,12 @@ table(cps$legalstat_chr)
 
 ### Weights
 For most person-level analyses of the ASEC samples, apply the ASECWT variable. ASECWT gives the population represented by each individual in the sample.  The sample represents 111,962,818 (of 320,371,997 people ~U.S. population - according to full cps data for 2017) of individuals 50 years and older in 2017.
-```{r, eval=FALSE}
+```{r}
 sum(cps$asecwt)
 ```
 
 #### Overall Calculations with Weights
-```{r, eval=FALSE}
+```{r}
 #check that weights are working correctly with undoc variable 
 sum((cps$undoc_log==F)*cps$asecwt) #110,137,383
 sum((cps$undoc_log==T)*cps$asecwt) #1,825,436
@@ -687,8 +689,8 @@ sum((cps$legalstat_chr == "undocumented" & mexico_bpl == T)*cps$asecwt) #743,736
 sum((cps$legalstat_chr == "us-born and born abroad" & cps$latino_chr == "mexican")*cps$asecwt) #2,950,808 includes born abroad
 ```
 
-#### Subset Data for Age Pyramids
-```{r, eval=FALSE}
+### Subset Data for Age Pyramids
+```{r}
 #Group all indviduals by legal status (includes nat. citizens and residents)
 legalfor_df <- filter(cps, nat_chr == "foreign born" & legalstat_chr == "legal immigrants")
 #Group all individuals by undocumented
@@ -706,7 +708,7 @@ undocmex_df <- filter(cps, mexico_bpl == T & nat_chr == "foreign born" & legalst
 ```
 
 ### Saving Files and Data Preparation for Machine Learning
-```{r, eval=FALSE}
+```{r}
 #Save the data as .csv
 write.csv(cps, "cps17.csv")
 #You need to make sure you save different years of the CPS accordingly - for example, cps16, cps17

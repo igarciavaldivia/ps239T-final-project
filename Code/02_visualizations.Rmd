@@ -2,7 +2,9 @@
 title: "02_visualizations"
 author: "Isabel García Valdivia"
 date: "4/25/2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 # PART II. Data Tables and Plots.
@@ -10,13 +12,13 @@ Constructing data tables and plots with new legal status variable (legalstat) in
 
 ## Load Libraries/Packages
 ```{r, eval=FALSE}
-library(vcd)      #three-way crostabs
-library(descr)    #weighted data and cross tabs
-library(xtable)   #export to LaTeX
-library(ggplot2)  #visuals
-library(ggthemes) #changing visual themes
-library(gridExtra) #packages to export plots
-library(cowplot) #same as above
+library(vcd)        #three-way crostabs
+library(descr)      #weighted data and cross tabs
+library(xtable)     #export to LaTeX
+library(ggplot2)    #visuals
+library(ggthemes)   #changing visual themes
+library(gridExtra)  #packages to export plots
+library(cowplot)    #same as above
 ```
 
 #### Tabulations of the Data: Older Adults by Legal Status and Age
@@ -36,6 +38,7 @@ xtable(table1) #export to LaTeX
 
 
 #### Boxplot: Older Adults by Legal Status and Age
+Note: I commented-out the titles of the graphs due for my presentation, but the code is provided here.  This is applicable for all the graphs.
 ```{r, eval=FALSE}
 #Graph 1: boxplot legal status by age
 boxplot1 <- ggplot(cps, aes(x= legalstat_chr, y= age_num, fill=legalstat_chr)) +
